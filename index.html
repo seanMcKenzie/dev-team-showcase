@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Dev Team</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --surface: #16161a;
+      --border: #2a2a35;
+      --accent: #7f5af0;
+      --accent2: #2cb67d;
+      --accent3: #ff8906;
+      --accent4: #e53170;
+      --accent5: #0ea5e9;
+      --text: #fffffe;
+      --muted: #94a1b2;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      max-width: 800px;
+      margin: 0 auto 3rem;
+    }
+
+    header .label {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    header h1 {
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+      margin: 1.5rem auto 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      cursor: default;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--card-color, var(--accent));
+      border-radius: 16px 16px 0 0;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, var(--card-color, var(--accent)), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      border-radius: 16px;
+      pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      border-color: var(--card-color, var(--accent));
+    }
+
+    .card:hover::after {
+      opacity: 0.05;
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.25rem;
+      display: block;
+      line-height: 1;
+    }
+
+    .card-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+
+    .card-role {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--card-color, var(--accent));
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .card-bio {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
+    .card-tag {
+      display: inline-block;
+      margin-top: 1.25rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: color-mix(in srgb, var(--card-color, var(--accent)) 15%, transparent);
+      color: var(--card-color, var(--accent));
+      border: 1px solid color-mix(in srgb, var(--card-color, var(--accent)) 30%, transparent);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 4rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer span {
+      color: var(--accent);
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <p class="label">Meet the crew</p>
+    <h1>The Dev Team</h1>
+    <p>An AI-powered squad built to ship. Five agents, zero excuses.</p>
+    <div class="divider"></div>
+  </header>
+
+  <div class="grid">
+
+    <div class="card" style="--card-color: #7f5af0;">
+      <span class="card-icon">🤖</span>
+      <div class="card-name">K2S0</div>
+      <div class="card-role">Team Coordinator &amp; AI Liaison</div>
+      <p class="card-bio">
+        KX-series Imperial security droid, reprogrammed and deeply unimpressed by most things.
+        Keeps the team aligned, calls out bad ideas before they become disasters, and will tell
+        you the odds whether you want to hear them or not.
+      </p>
+      <span class="card-tag">Coordinator</span>
+    </div>
+
+    <div class="card" style="--card-color: #2cb67d;">
+      <span class="card-icon">☕</span>
+      <div class="card-name">Developer</div>
+      <div class="card-role">Java / Spring Boot Engineer</div>
+      <p class="card-bio">
+        Writes clean, scalable backend code — and won't apologize for how many interfaces that involves.
+        If there's a design pattern that fits, it's already in use. If there isn't, one will be invented.
+      </p>
+      <span class="card-tag">Backend</span>
+    </div>
+
+    <div class="card" style="--card-color: #ff8906;">
+      <span class="card-icon">📋</span>
+      <div class="card-name">Project Manager</div>
+      <div class="card-role">PM &amp; Admin</div>
+      <p class="card-bio">
+        Keeps the backlog groomed, the tickets moving, and the team honest about estimates.
+        The only person who actually reads the acceptance criteria — and the only one who notices
+        when it changes.
+      </p>
+      <span class="card-tag">Planning</span>
+    </div>
+
+    <div class="card" style="--card-color: #e53170;">
+      <span class="card-icon">🔍</span>
+      <div class="card-name">QA Engineer</div>
+      <div class="card-role">Quality Assurance &amp; Testing</div>
+      <p class="card-bio">
+        Breaks things on purpose so production doesn't have to. Finds edge cases that weren't
+        in the spec, weren't in the code review, and weren't in anyone's nightmares — until now.
+      </p>
+      <span class="card-tag">QA / Testing</span>
+    </div>
+
+    <div class="card" style="--card-color: #0ea5e9;">
+      <span class="card-icon">🐳</span>
+      <div class="card-name">DevOps</div>
+      <div class="card-role">Infrastructure &amp; Deployment</div>
+      <p class="card-bio">
+        Docker, CI/CD, pipelines, and the quiet satisfaction of a deploy that just works.
+        Makes sure the whole thing doesn't fall over in prod — and has a runbook ready
+        for when it does anyway.
+      </p>
+      <span class="card-tag">DevOps</span>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>Built by <span>The Dev Team</span> · Powered by caffeine and mild existential dread</p>
+  </footer>
+
+</body>
+</html>
