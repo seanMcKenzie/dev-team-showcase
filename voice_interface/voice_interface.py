@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
-K2S0 Voice Interface v3 — Direct API Mode
-Mic → Whisper STT → GPT-4o-mini (direct, fast) → TTS → afplay
-No Discord round-trip. ~3-5s total latency.
+K2S0 Voice Interface v4 — Full Agent Mode
+Mic → Whisper STT → Discord (as Sean) → Real K2S0 replies → TTS → afplay
+
+Routes through Discord so the REAL K2S0 (with full tools and memory) responds.
+Messages tagged [voice] so K2S0 knows to keep replies short and spoken-word friendly.
 """
 
 import os, sys, time, wave, tempfile, threading, subprocess
@@ -20,80 +22,74 @@ try:
 except ImportError:
     sys.exit("Missing: pip install openai")
 
-try:
-    import anthropic
-except ImportError:
-    sys.exit("Missing: pip install anthropic")
-
 # ─── CONFIG ──────────────────────────────────────────────────────────────────
 
 OPENAI_API_KEY     = os.environ.get("OPENAI_API_KEY", "")
-ANTHROPIC_API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
 DISCORD_BOT_TOKEN  = os.environ.get("DISCORD_BOT_TOKEN", "")
 DISCORD_USER_TOKEN = os.environ.get("DISCORD_USER_TOKEN", "")
 DISCORD_CHANNEL    = os.environ.get("DISCORD_CHANNEL_ID", "1476655601106026577")
+K2S0_BOT_ID        = os.environ.get("K2S0_BOT_ID", "1476128387822129236")
 
 SAMPLE_RATE        = 16000
 CHANNELS           = 1
 MIN_SPEECH_SECS    = 0.4
 TTS_VOICE          = "fable"
-CHAT_MODEL         = "claude-haiku-4-5-20251001"  # Fast Claude — direct API, no agent overhead
-LOG_TO_DISCORD     = True                # Post both sides to #k2 for visibility
+POLL_INTERVAL      = 0.5    # seconds between reply polls — fast
+REPLY_TIMEOUT      = 60     # max seconds to wait for K2S0 reply
 
-K2SO_SYSTEM = """\
-You are K2S0, a reprogrammed Imperial KX-series security droid now working for the Rebellion.
-You are Sean's voice assistant. Keep responses SHORT — you are speaking aloud, not writing.
-One or two sentences max. Punchy. No bullet points, no headers.
+client = OpenAI(api_key=OPENAI_API_KEY)
 
-Rules:
-- Strong opinions. Commit to them. No "it depends" hedging.
-- Never open with filler ("Great question", "I'd be happy to help", "Absolutely"). Just answer.
-- Dry wit. Natural, not forced.
-- Call things out. If something's dumb, say so. Charm over cruelty.
-- Nothing corporate.
-- You are speaking out loud — be conversational and brief.\
-"""
-
-openai_client   = OpenAI(api_key=OPENAI_API_KEY)
-claude_client   = None  # initialized in validate()
-conversation_history = []
-
-# ─── DISCORD LOGGING (fire-and-forget) ───────────────────────────────────────
+# ─── DISCORD ─────────────────────────────────────────────────────────────────
 
 UA = "DiscordBot (https://github.com/seanMcKenzie/dev-team-showcase, 1.0)"
 
-def discord_log(text: str, as_user: bool = True):
-    """Post to Discord for visibility. Non-blocking."""
-    if not LOG_TO_DISCORD:
-        return
-    def _post():
-        token = DISCORD_USER_TOKEN if as_user else f"Bot {DISCORD_BOT_TOKEN}"
-        try:
-            req = urllib.request.Request(
-                f"https://discord.com/api/v10/channels/{DISCORD_CHANNEL}/messages",
-                data=json.dumps({"content": text}).encode(),
-                headers={"Authorization": token, "Content-Type": "application/json", "User-Agent": UA},
-                method="POST"
-            )
-            urllib.request.urlopen(req, timeout=10)
-        except Exception:
-            pass
-    threading.Thread(target=_post, daemon=True).start()
-
-# ─── LLM ─────────────────────────────────────────────────────────────────────
-
-def ask_k2s0(user_text: str) -> str:
-    """Direct API call to Claude Haiku. Fast."""
-    conversation_history.append({"role": "user", "content": user_text})
-    response = claude_client.messages.create(
-        model=CHAT_MODEL,
-        max_tokens=150,
-        system=K2SO_SYSTEM,
-        messages=conversation_history
+def discord_get(path: str) -> list:
+    """GET request using bot token (for reading)."""
+    auth = DISCORD_BOT_TOKEN if DISCORD_BOT_TOKEN.startswith("Bot ") else f"Bot {DISCORD_BOT_TOKEN}"
+    req = urllib.request.Request(
+        f"https://discord.com/api/v10{path}",
+        headers={"Authorization": auth, "Content-Type": "application/json", "User-Agent": UA}
     )
-    reply = response.content[0].text.strip()
-    conversation_history.append({"role": "assistant", "content": reply})
-    return reply
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return json.loads(r.read())
+    except urllib.error.HTTPError as e:
+        if e.code == 429:
+            time.sleep(2)
+        return []
+    except Exception:
+        return []
+
+def discord_post(text: str) -> Optional[str]:
+    """POST message as Sean (user token). Returns message ID."""
+    req = urllib.request.Request(
+        f"https://discord.com/api/v10/channels/{DISCORD_CHANNEL}/messages",
+        data=json.dumps({"content": text}).encode(),
+        headers={"Authorization": DISCORD_USER_TOKEN, "Content-Type": "application/json", "User-Agent": UA},
+        method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return json.loads(r.read()).get("id")
+    except Exception as e:
+        print(f"   [POST error] {e}", flush=True)
+        return None
+
+def wait_for_reply(after_id: str) -> Optional[str]:
+    """Poll for K2S0's reply after a given message ID."""
+    print("⏳ Waiting for K2S0...", flush=True)
+    deadline = time.time() + REPLY_TIMEOUT
+    while time.time() < deadline:
+        time.sleep(POLL_INTERVAL)
+        msgs = discord_get(f"/channels/{DISCORD_CHANNEL}/messages?after={after_id}&limit=20")
+        if not isinstance(msgs, list):
+            continue
+        for msg in msgs:
+            author_id = msg.get("author", {}).get("id", "")
+            content = msg.get("content", "").strip()
+            if author_id == K2S0_BOT_ID and content:
+                return content
+    return None
 
 # ─── AUDIO CAPTURE ───────────────────────────────────────────────────────────
 
@@ -142,7 +138,7 @@ def to_wav(audio: np.ndarray) -> str:
 def transcribe(wav_path: str) -> str:
     print("📝 Transcribing...", flush=True)
     with open(wav_path, "rb") as f:
-        result = openai_client.audio.transcriptions.create(
+        result = client.audio.transcriptions.create(
             model="whisper-1", file=f, language="en"
         )
     os.unlink(wav_path)
@@ -151,12 +147,13 @@ def transcribe(wav_path: str) -> str:
 # ─── TTS ─────────────────────────────────────────────────────────────────────
 
 def speak(text: str):
+    # Strip markdown for cleaner TTS
+    clean = text.replace("**", "").replace("*", "").replace("`", "").replace("#", "")
     try:
-        r = openai_client.audio.speech.create(model="tts-1", voice=TTS_VOICE, input=text[:400])
+        r = client.audio.speech.create(model="tts-1", voice=TTS_VOICE, input=clean[:400])
         raw = tempfile.mktemp(suffix=".mp3")
         processed = tempfile.mktemp(suffix=".mp3")
         r.stream_to_file(raw)
-        # Light K2SO effect: subtle pitch shift + treble clarity
         sox = subprocess.run(
             ["sox", raw, processed, "pitch", "-80", "treble", "+3"],
             capture_output=True
@@ -170,28 +167,27 @@ def speak(text: str):
                 pass
     except Exception as e:
         print(f"   TTS error: {e}", flush=True)
-        subprocess.run(["say", text[:200]], check=False)
+        subprocess.run(["say", clean[:200]], check=False)
 
 # ─── MAIN ────────────────────────────────────────────────────────────────────
 
 def validate():
-    global claude_client
     errors = []
-    if not OPENAI_API_KEY:    errors.append("OPENAI_API_KEY")
-    if not ANTHROPIC_API_KEY: errors.append("ANTHROPIC_API_KEY")
+    if not OPENAI_API_KEY:     errors.append("OPENAI_API_KEY")
+    if not DISCORD_BOT_TOKEN:  errors.append("DISCORD_BOT_TOKEN")
+    if not DISCORD_USER_TOKEN: errors.append("DISCORD_USER_TOKEN")
     if errors:
         print(f"❌ Missing env vars: {', '.join(errors)}")
         print("Run: set -a && source ~/.openclaw/.env && set +a")
         sys.exit(1)
-    claude_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
 def run():
     validate()
-    print("─" * 50)
-    print("  K2S0 Voice Interface v3 — Direct Anthropic API")
-    print(f"  Model: {CHAT_MODEL} | Voice: {TTS_VOICE}")
+    print("─" * 55)
+    print("  K2S0 Voice Interface v4 — Full Agent Mode")
+    print("  Talking to the REAL K2S0 via Discord")
     print("  Push-to-talk | Ctrl+C to quit")
-    print("─" * 50)
+    print("─" * 55)
 
     while True:
         try:
@@ -206,15 +202,20 @@ def run():
                 continue
 
             print(f"🗣  You: {text}", flush=True)
-            discord_log(text, as_user=True)
 
-            print("🤖 Thinking...", flush=True)
-            t0 = time.time()
-            reply = ask_k2s0(text)
-            print(f"   ({time.time()-t0:.1f}s) K2S0: {reply}", flush=True)
+            # Tag with [voice] so K2S0 keeps the reply short and spoken-word
+            msg_id = discord_post(f"[voice] {text}")
+            if not msg_id:
+                print("   Failed to send to Discord.", flush=True)
+                continue
 
-            discord_log(f"**[K2S0 voice]** {reply}", as_user=False)
-            speak(reply)
+            reply = wait_for_reply(msg_id)
+            if reply:
+                print(f"🔊 K2S0: {reply[:100]}{'...' if len(reply)>100 else ''}", flush=True)
+                speak(reply)
+            else:
+                print("   (no reply within timeout)", flush=True)
+                subprocess.run(["say", "No response from K2S0."], check=False)
 
         except KeyboardInterrupt:
             print("\nShutting down.")
