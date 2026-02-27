@@ -327,6 +327,46 @@ def import_memory_files():
             except Exception as e:
                 print(f"[log] Error importing {md_file}: {e}")
 
+    # Also import reports/*.html and reports/*.md files
+    for agent in AGENTS:
+        agent_id   = agent["id"]
+        agent_name = agent["name"]
+        workspace  = find_workspace(agent_id)
+        if workspace is None:
+            continue
+        reports_dir = workspace / "reports"
+        if not reports_dir.is_dir():
+            continue
+        for rfile in sorted(reports_dir.iterdir()):
+            if rfile.suffix not in (".html", ".md"):
+                continue
+            try:
+                stat = rfile.stat()
+                file_mtime = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc)
+                if file_mtime < cutoff:
+                    continue
+                rel_path = f"reports/{rfile.name}"
+                det_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"{agent_id}:{rel_path}:report"))
+                if det_id not in existing_ids:
+                    entry = {
+                        "id": det_id,
+                        "timestamp": file_mtime.isoformat(),
+                        "agent": agent_id,
+                        "agent_name": agent_name,
+                        "event_type": "report_created",
+                        "title": f"📄 Report: {rfile.stem.replace('-', ' ').replace('_', ' ').title()}",
+                        "detail": f"Report file: {rel_path} ({stat.st_size} bytes)",
+                        "file": rel_path,
+                        "model": AGENT_MODELS.get(agent_id, AGENT_MODELS.get("__default__", "unknown")),
+                        "estimated_tokens": stat.st_size // 4,
+                        "tags": ["report"]
+                    }
+                    append_log_entry(entry)
+                    existing_ids.add(det_id)
+                    imported_count += 1
+            except Exception as e:
+                print(f"[log] Error importing report {rfile}: {e}")
+
     print(f"[log] Import complete. Added {imported_count} new entries.")
     return imported_count
 
@@ -344,10 +384,12 @@ def find_workspace(agent_id):
 
 
 def scan_md_files(workspace_dir):
+    """Scan .md files AND .html files in reports/ subdirectory."""
     if workspace_dir is None:
         return []
     results = []
-    for md_file in workspace_dir.rglob("*.md"):
+    patterns = list(workspace_dir.rglob("*.md")) + list((workspace_dir / "reports").glob("*.html") if (workspace_dir / "reports").is_dir() else [])
+    for md_file in patterns:
         try:
             stat = md_file.stat()
             results.append((md_file, stat.st_mtime, stat.st_size))
@@ -519,19 +561,20 @@ def detect_file_changes(agent_id, workspace):
             except ValueError:
                 rel = path.name
 
+            is_report = "reports" in rel
             if is_new:
-                event_type   = "task"
-                severity     = "task"
-                event_detail = f"Created {rel}"
-                log_event_type = "file_change"
-                log_title = f"New file: {rel}"
+                event_type     = "task"
+                severity       = "task"
+                event_detail   = f"Created {rel}"
+                log_event_type = "report_created" if is_report else "file_change"
+                log_title      = f"📄 Report published: {path.name}" if is_report else f"New file: {rel}"
             else:
                 event_type   = "updated"
                 severity     = "info"
                 delta_str    = (f"+{line_delta}" if line_delta >= 0 else str(line_delta)) + " lines"
                 event_detail = f"Updated {rel} ({delta_str})"
-                log_event_type = "file_change"
-                log_title = f"Updated: {rel} ({delta_str})"
+                log_event_type = "report_updated" if is_report else "file_change"
+                log_title      = f"📄 Report updated: {path.name} ({delta_str})" if is_report else f"Updated: {rel} ({delta_str})"
 
             ts = datetime.fromtimestamp(mtime, tz=timezone.utc).isoformat()
             event = {
