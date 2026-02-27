@@ -1160,6 +1160,189 @@
       font-size: 0.8rem;
       color: var(--text-muted);
     }
+
+    /* ==============================
+       API PILLS (agent cards)
+    ============================== */
+    .api-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    .api-pill {
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .api-pill.anthropic { background: rgba(251,146,60,0.15); color: #fb923c; border-color: rgba(251,146,60,0.3); }
+    .api-pill.openai    { background: rgba(34,197,94,0.15);  color: #22c55e; border-color: rgba(34,197,94,0.3);  }
+    .api-pill.github    { background: rgba(168,85,247,0.15); color: #a855f7; border-color: rgba(168,85,247,0.3); }
+    .api-pill.figma     { background: rgba(96,165,250,0.15); color: #60a5fa; border-color: rgba(96,165,250,0.3); }
+    .api-pill.discord   { background: rgba(99,102,241,0.15); color: #818cf8; border-color: rgba(99,102,241,0.3); }
+    .api-pill.other     { background: rgba(100,116,139,0.15); color: #94a3b8; border-color: rgba(100,116,139,0.3); }
+    .api-pills-loading  { font-size: 0.68rem; color: var(--text-muted); }
+
+    /* ==============================
+       APIS TAB
+    ============================== */
+    .apis-summary-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .apis-summary-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .apis-summary-pill .label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .apis-summary-pill .value { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); }
+    .apis-summary-pill .sub   { font-size: 0.7rem; color: var(--text-secondary); }
+
+    .apis-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 700px) {
+      .apis-layout { grid-template-columns: 1fr; }
+    }
+
+    .apis-sidebar {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      position: sticky;
+      top: 80px;
+    }
+    .apis-sidebar-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      padding: 12px 16px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .apis-sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+    }
+    .apis-sidebar-item:last-child { border-bottom: none; }
+    .apis-sidebar-item:hover { background: var(--bg-card); color: var(--text-primary); }
+    .apis-sidebar-item.active { background: var(--bg-card); color: var(--text-primary); font-weight: 600; }
+    .apis-sidebar-count {
+      margin-left: auto;
+      font-size: 0.68rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1px 7px;
+      color: var(--text-muted);
+    }
+
+    .apis-main-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .apis-agent-section {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .apis-agent-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    .apis-agent-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .apis-agent-count {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .apis-entry {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.15s;
+    }
+    .apis-entry:last-child { border-bottom: none; }
+    .apis-entry:hover { background: var(--bg-card-hover); }
+    .apis-entry-icon {
+      font-size: 1.1rem;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+    .apis-entry-body { flex: 1; }
+    .apis-entry-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .apis-entry-endpoint {
+      font-size: 0.72rem;
+      font-family: monospace;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .apis-entry-detail {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    .apis-entry-ts {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+    .apis-empty {
+      padding: 32px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .apis-loading {
+      padding: 32px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .history-event-badge.api-call {
+      background: rgba(6,182,212,0.15);
+      color: #06b6d4;
+      border-color: rgba(6,182,212,0.3);
+    }
   </style>
 </head>
 <body>
@@ -1190,6 +1373,7 @@
     <button class="tab-btn" onclick="switchTab('feed')">📡 Activity Feed</button>
     <button class="tab-btn" onclick="switchTab('insights')">📊 Insights &amp; Usage</button>
     <button class="tab-btn" onclick="switchTab('history')">🗂 History</button>
+    <button class="tab-btn" onclick="switchTab('apis')">🔌 APIs</button>
   </div>
 
   <!-- ===== MAIN ===== -->
@@ -1330,6 +1514,7 @@
           <option value="file_change">file_change</option>
           <option value="task_start">task_start</option>
           <option value="task_complete">task_complete</option>
+          <option value="api_call">🔌 api_call</option>
         </select>
         <button class="history-clear-btn" onclick="clearHistoryFilters()">✕ Clear</button>
         <span class="history-count" id="historyCount">— entries</span>
@@ -1353,6 +1538,53 @@
         <button class="history-page-btn" id="historyPrevBtn" onclick="historyPrevPage()" disabled>← Prev</button>
         <span class="history-page-info" id="historyPageInfo">Page 1</span>
         <button class="history-page-btn" id="historyNextBtn" onclick="historyNextPage()">Next →</button>
+      </div>
+
+    </div>
+
+    <!-- ===== TAB: APIS ===== -->
+    <div class="tab-content" id="tab-apis">
+
+      <!-- Summary Bar -->
+      <div class="apis-summary-bar" id="apisSummaryBar">
+        <div class="apis-summary-pill">
+          <span class="label">Total API Calls</span>
+          <span class="value" id="apisTotalCalls">—</span>
+          <span class="sub">across all agents</span>
+        </div>
+        <div class="apis-summary-pill">
+          <span class="label">Unique APIs</span>
+          <span class="value" id="apisUniqueCount">—</span>
+          <span class="sub">distinct providers</span>
+        </div>
+        <div class="apis-summary-pill">
+          <span class="label">Most Used</span>
+          <span class="value" style="font-size:1rem;" id="apisMostUsed">—</span>
+          <span class="sub" id="apisMostUsedCount"></span>
+        </div>
+        <div class="apis-summary-pill">
+          <span class="label">Most Active Agent</span>
+          <span class="value" style="font-size:1rem;" id="apisMostActiveAgent">—</span>
+          <span class="sub" id="apisMostActiveAgentCount"></span>
+        </div>
+      </div>
+
+      <!-- Layout: sidebar + main -->
+      <div class="apis-layout">
+
+        <!-- Sidebar: agent list -->
+        <div class="apis-sidebar">
+          <div class="apis-sidebar-title">Agents</div>
+          <div id="apisSidebar">
+            <div class="apis-loading">Loading…</div>
+          </div>
+        </div>
+
+        <!-- Main: api entries -->
+        <div class="apis-main-panel" id="apisMainPanel">
+          <div class="apis-loading">⏳ Loading API interactions…</div>
+        </div>
+
       </div>
 
     </div>
@@ -1668,6 +1900,11 @@ function agentCardHTML(a) {
         <div style="font-size:0.68rem; color:var(--text-muted); margin-top:4px;">
           Estimated tokens (chars ÷ 4)
         </div>
+      </div>
+
+      <div class="card-section">
+        <div class="card-section-label">🔌 APIs Used</div>
+        ${renderAgentApiPills(a.id)}
       </div>
     </div>
   `;
@@ -2118,16 +2355,20 @@ function renderHistoryResults(entries) {
     const title     = escHtml(e.title || '(no title)');
     const detail    = escHtml(e.detail || '');
     const file      = e.file ? `<span class="history-file">${escHtml(e.file)}</span>` : '';
-    const eventType = escHtml(e.event_type || '');
+    const eventType = e.event_type || '';
+    const isApiCall = eventType === 'api_call';
+    const eventBadgeClass = isApiCall ? 'history-event-badge api-call' : 'history-event-badge';
+    const eventIcon = isApiCall ? '🔌 ' : '';
     const tags      = (e.tags || []).map(t => `<span class="history-tag">${escHtml(t)}</span>`).join('');
     const entryId   = `hentry-${i}`;
+    const entryBorder = isApiCall ? 'border-left: 3px solid #06b6d4;' : '';
 
-    return `<div class="history-entry" id="${entryId}" onclick="toggleHistoryEntry('${entryId}')">
+    return `<div class="history-entry" id="${entryId}" onclick="toggleHistoryEntry('${entryId}')" style="${entryBorder}">
       <div class="history-entry-header">
         <span class="history-ts">${ts}</span>
         <span class="history-agent-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${agentLabel}</span>
-        <span class="history-event-badge">${eventType}</span>
-        <span class="history-title">${title}</span>
+        <span class="${eventBadgeClass}">${eventIcon}${escHtml(eventType)}</span>
+        <span class="history-title" ${isApiCall ? 'style="color:#06b6d4"' : ''}>${title}</span>
         ${file}
       </div>
       <div class="history-detail-panel">
@@ -2175,9 +2416,262 @@ function escHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-// Patch switchTab to trigger history load
-const _origSwitchTab = switchTab;
-// Override switchTab to handle history tab
+// ================================================
+// APIS TAB
+// ================================================
+const APIS_URL = 'http://localhost:7800/apis';
+
+let apisData = null;       // { by_agent: {...}, all: [...] }
+let apisActiveAgent = 'all';
+
+const API_PROVIDER_MAP = {
+  'anthropic': 'anthropic',
+  'openai':    'openai',
+  'github':    'github',
+  'figma':     'figma',
+  'discord':   'discord',
+};
+
+function getApiProviderClass(apiName) {
+  if (!apiName) return 'other';
+  const lower = apiName.toLowerCase();
+  for (const [key, cls] of Object.entries(API_PROVIDER_MAP)) {
+    if (lower.includes(key)) return cls;
+  }
+  return 'other';
+}
+
+function getApiProviderColor(apiName) {
+  const cls = getApiProviderClass(apiName);
+  const colors = {
+    anthropic: '#fb923c',
+    openai:    '#22c55e',
+    github:    '#a855f7',
+    figma:     '#60a5fa',
+    discord:   '#818cf8',
+    other:     '#94a3b8',
+  };
+  return colors[cls] || colors.other;
+}
+
+function getApiIcon(apiName) {
+  const lower = (apiName || '').toLowerCase();
+  if (lower.includes('anthropic')) return '🟠';
+  if (lower.includes('openai'))    return '🟢';
+  if (lower.includes('github'))    return '🟣';
+  if (lower.includes('figma'))     return '🔵';
+  if (lower.includes('discord'))   return '💜';
+  return '🔌';
+}
+
+function renderAgentApiPills(agentId) {
+  if (!apisData) {
+    return `<div class="api-pills-loading">Loading…</div>`;
+  }
+  const entries = apisData.by_agent[agentId] || [];
+  if (entries.length === 0) {
+    return `<div class="api-pills-loading" style="font-size:0.68rem;color:var(--text-muted);">No API calls logged</div>`;
+  }
+  // Deduplicate by api name
+  const seen = new Set();
+  const pills = [];
+  for (const e of entries) {
+    const name = e.api || e.title || 'Unknown API';
+    if (!seen.has(name)) {
+      seen.add(name);
+      pills.push(name);
+    }
+  }
+  return `<div class="api-pills">${pills.map(name => {
+    const cls = getApiProviderClass(name);
+    return `<span class="api-pill ${cls}" title="${escHtml(name)}">${escHtml(name)}</span>`;
+  }).join('')}</div>`;
+}
+
+async function fetchApis() {
+  try {
+    const res = await fetch(APIS_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('bad');
+    apisData = await res.json();
+  } catch (e) {
+    apisData = { by_agent: {}, all: [] };
+  }
+}
+
+async function loadApis() {
+  await fetchApis();
+  renderApisSummary();
+  renderApisSidebar();
+  renderApisMain(apisActiveAgent);
+  // Re-render agent cards to populate API pills
+  renderAgentCards(lastAgentData);
+}
+
+function renderApisSummary() {
+  if (!apisData) return;
+  const all = apisData.all || [];
+  document.getElementById('apisTotalCalls').textContent = all.length;
+
+  // Unique API names
+  const apiNames = new Set(all.map(e => e.api || e.title || 'Unknown'));
+  document.getElementById('apisUniqueCount').textContent = apiNames.size;
+
+  // Most used API
+  const apiCount = {};
+  all.forEach(e => {
+    const name = e.api || e.title || 'Unknown';
+    apiCount[name] = (apiCount[name] || 0) + 1;
+  });
+  const sortedApis = Object.entries(apiCount).sort((a, b) => b[1] - a[1]);
+  if (sortedApis.length > 0) {
+    document.getElementById('apisMostUsed').textContent = sortedApis[0][0];
+    document.getElementById('apisMostUsedCount').textContent = sortedApis[0][1] + ' calls';
+  } else {
+    document.getElementById('apisMostUsed').textContent = '—';
+    document.getElementById('apisMostUsedCount').textContent = '';
+  }
+
+  // Most active agent
+  const byAgent = apisData.by_agent || {};
+  const agentCallCounts = Object.entries(byAgent).map(([id, entries]) => [id, entries.length]);
+  agentCallCounts.sort((a, b) => b[1] - a[1]);
+  if (agentCallCounts.length > 0) {
+    const [topAgentId, topCount] = agentCallCounts[0];
+    const label = AGENT_LABELS[topAgentId] || topAgentId;
+    document.getElementById('apisMostActiveAgent').textContent = label;
+    document.getElementById('apisMostActiveAgentCount').textContent = topCount + ' calls';
+  } else {
+    document.getElementById('apisMostActiveAgent').textContent = '—';
+    document.getElementById('apisMostActiveAgentCount').textContent = '';
+  }
+}
+
+function renderApisSidebar() {
+  if (!apisData) return;
+  const sidebar = document.getElementById('apisSidebar');
+  const byAgent = apisData.by_agent || {};
+  const all = apisData.all || [];
+
+  const agentOrder = ['main','developer','pm','qa','devops','research','designer'];
+
+  let html = `
+    <div class="apis-sidebar-item ${apisActiveAgent === 'all' ? 'active' : ''}"
+         onclick="selectApisAgent('all')">
+      🌐 All Agents
+      <span class="apis-sidebar-count">${all.length}</span>
+    </div>
+  `;
+
+  for (const agentId of agentOrder) {
+    const entries = byAgent[agentId] || [];
+    if (entries.length === 0) continue;
+    const label = AGENT_LABELS[agentId] || agentId;
+    html += `
+      <div class="apis-sidebar-item ${apisActiveAgent === agentId ? 'active' : ''}"
+           onclick="selectApisAgent('${agentId}')">
+        ${label}
+        <span class="apis-sidebar-count">${entries.length}</span>
+      </div>
+    `;
+  }
+
+  sidebar.innerHTML = html;
+}
+
+function selectApisAgent(agentId) {
+  apisActiveAgent = agentId;
+  // Re-render sidebar to update active state
+  renderApisSidebar();
+  renderApisMain(agentId);
+}
+
+function renderApisMain(agentId) {
+  if (!apisData) return;
+  const panel = document.getElementById('apisMainPanel');
+  const byAgent = apisData.by_agent || {};
+
+  let agentsToRender = [];
+  if (agentId === 'all') {
+    const agentOrder = ['main','developer','pm','qa','devops','research','designer'];
+    for (const id of agentOrder) {
+      if (byAgent[id] && byAgent[id].length > 0) {
+        agentsToRender.push(id);
+      }
+    }
+    // Add any agents not in the default order
+    Object.keys(byAgent).forEach(id => {
+      if (!agentsToRender.includes(id) && byAgent[id].length > 0) {
+        agentsToRender.push(id);
+      }
+    });
+  } else {
+    agentsToRender = [agentId];
+  }
+
+  if (agentsToRender.length === 0) {
+    panel.innerHTML = `<div class="apis-empty">🔌 No API interactions logged yet.<br><span style="font-size:0.75rem;color:var(--text-muted);">API calls will appear here when agents interact with external APIs.</span></div>`;
+    return;
+  }
+
+  panel.innerHTML = agentsToRender.map(aid => {
+    const entries = byAgent[aid] || [];
+    const agentDef = AGENT_MAP[aid] || {};
+    const agentColor = agentDef.color || '#888';
+    const agentLabel = AGENT_LABELS[aid] || aid;
+    const agentEmoji = agentDef.emoji || '🤖';
+
+    // Deduplicate by api name, keep latest
+    const apiLatest = {};
+    const apiAllEntries = {};
+    for (const e of entries) {
+      const name = e.api || e.title || 'Unknown API';
+      if (!apiLatest[name] || e.timestamp > apiLatest[name].timestamp) {
+        apiLatest[name] = e;
+      }
+      if (!apiAllEntries[name]) apiAllEntries[name] = [];
+      apiAllEntries[name].push(e);
+    }
+
+    const apiRows = Object.entries(apiLatest).map(([name, e]) => {
+      const cls = getApiProviderClass(name);
+      const color = getApiProviderColor(name);
+      const icon = getApiIcon(name);
+      const endpoint = e.endpoint || e.file || '';
+      const detail = e.detail || '';
+      const ts = e.timestamp ? timeAgo(e.timestamp) : '—';
+      const callCount = apiAllEntries[name].length;
+
+      return `
+        <div class="apis-entry">
+          <div class="apis-entry-icon">${icon}</div>
+          <div class="apis-entry-body">
+            <div class="apis-entry-name" style="color:${color}">${escHtml(name)}
+              ${callCount > 1 ? `<span style="font-size:0.65rem;font-weight:400;color:var(--text-muted);margin-left:6px;">${callCount} calls</span>` : ''}
+            </div>
+            ${endpoint ? `<div class="apis-entry-endpoint">${escHtml(endpoint)}</div>` : ''}
+            ${detail ? `<div class="apis-entry-detail">${escHtml(detail.slice(0, 150))}${detail.length > 150 ? '…' : ''}</div>` : ''}
+          </div>
+          <div class="apis-entry-ts">${ts}</div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="apis-agent-section">
+        <div class="apis-agent-header" style="border-left: 3px solid ${agentColor}">
+          <span style="font-size:1.2rem">${agentEmoji}</span>
+          <span class="apis-agent-name" style="color:${agentColor}">${agentLabel}</span>
+          <span class="apis-agent-count">${Object.keys(apiLatest).length} unique API${Object.keys(apiLatest).length !== 1 ? 's' : ''} · ${entries.length} total calls</span>
+        </div>
+        ${apiRows || '<div class="apis-empty">No calls yet</div>'}
+      </div>
+    `;
+  }).join('');
+}
+
+// ================================================
+// Override switchTab to handle history + apis tabs
+// ================================================
 function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -2190,7 +2684,19 @@ function switchTab(tab) {
     loadHistory();
     loadHistorySummary();
   }
+  if (tab === 'apis') {
+    loadApis();
+  }
 }
+
+// Fetch APIs data on boot so agent card pills populate
+(async function initApis() {
+  await fetchApis();
+  // Re-render agent cards if already loaded
+  if (lastAgentData.length > 0) {
+    renderAgentCards(lastAgentData);
+  }
+})();
 </script>
 </body>
 </html>

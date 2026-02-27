@@ -815,6 +815,8 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.handle_logs_agents()
         elif path == "/logs/summary":
             self.handle_logs_summary()
+        elif path == "/apis":
+            self.handle_apis()
         else:
             self.send_response(404)
             self.send_cors()
@@ -867,6 +869,27 @@ class DashboardHandler(BaseHTTPRequestHandler):
             "total": get_total_log_count(),
         })
 
+    def handle_apis(self):
+        """Return all api_call log entries, grouped by agent."""
+        entries = read_log_entries()
+        api_entries = [e for e in entries if e.get("event_type") == "api_call"]
+
+        # Sort all by timestamp desc
+        api_entries.sort(key=lambda e: e.get("timestamp", ""), reverse=True)
+
+        # Group by agent
+        by_agent = {}
+        for e in api_entries:
+            agent = e.get("agent", "unknown")
+            if agent not in by_agent:
+                by_agent[agent] = []
+            by_agent[agent].append(e)
+
+        self.send_json({
+            "by_agent": by_agent,
+            "all": api_entries,
+        })
+
     def handle_logs_agents(self):
         self.send_json(get_log_agents())
 
@@ -893,7 +916,7 @@ if __name__ == "__main__":
     print("  K2S0 Agent Status Server")
     print(f"  Listening on http://localhost:{PORT}")
     print(f"  Endpoints: /agents  /activity  /health")
-    print(f"  Log endpoints: /logs  /logs/agents  /logs/summary")
+    print(f"  Log endpoints: /logs  /logs/agents  /logs/summary  /apis")
     print(f"  Scanning:  {OPENCLAW_BASE}")
     print("=" * 56)
 
