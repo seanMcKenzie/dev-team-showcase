@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+.env
+.venv/
+
+# Sensitive files
+*.env
+.openclaw/.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+*.tmp
+*.log
+/tmp/
+
+# Workspace state
+.openclaw/workspace-state.json
