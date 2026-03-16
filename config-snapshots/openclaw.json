@@ -1,0 +1,374 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.12",
+    "lastTouchedAt": "2026-03-16T20:02:57.365Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-02-25T09:16:37.013Z",
+    "lastRunVersion": "2026.2.24",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "anthropic:claud-token": {
+        "provider": "anthropic",
+        "mode": "token"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "anthropic/claude-sonnet-4-6"
+      },
+      "workspace": "/Users/seanmckenzie/.openclaw/workspace",
+      "memorySearch": {
+        "query": {
+          "hybrid": {
+            "enabled": true,
+            "vectorWeight": 0.7,
+            "textWeight": 0.3,
+            "candidateMultiplier": 4
+          }
+        },
+        "cache": {
+          "enabled": true
+        }
+      },
+      "contextPruning": {
+        "mode": "cache-ttl",
+        "ttl": "5m"
+      },
+      "compaction": {
+        "mode": "safeguard",
+        "reserveTokensFloor": 20000,
+        "maxHistoryShare": 0.6,
+        "model": "anthropic/claude-haiku-4",
+        "memoryFlush": {
+          "enabled": true,
+          "softThresholdTokens": 4000,
+          "prompt": "Write any lasting notes to memory/YYYY-MM-DD.md; reply with NO_REPLY if nothing to store.",
+          "systemPrompt": "Session nearing compaction. Store durable memories now."
+        }
+      },
+      "heartbeat": {
+        "every": "30m"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "subagents": {
+          "allowAgents": [
+            "*"
+          ]
+        }
+      },
+      {
+        "id": "developer",
+        "name": "developer",
+        "workspace": "/Users/seanmckenzie/.openclaw/workspace-developer",
+        "agentDir": "/Users/seanmckenzie/.openclaw/agents/developer/agent",
+        "model": {
+          "primary": "anthropic/claude-opus-4-6"
+        }
+      },
+      {
+        "id": "pm",
+        "name": "pm",
+        "workspace": "/Users/seanmckenzie/.openclaw/workspace-pm",
+        "agentDir": "/Users/seanmckenzie/.openclaw/agents/pm/agent"
+      },
+      {
+        "id": "qa",
+        "name": "qa",
+        "workspace": "/Users/seanmckenzie/.openclaw/workspace-qa",
+        "agentDir": "/Users/seanmckenzie/.openclaw/agents/qa/agent"
+      },
+      {
+        "id": "devops",
+        "name": "devops",
+        "workspace": "/Users/seanmckenzie/.openclaw/workspace-devops",
+        "agentDir": "/Users/seanmckenzie/.openclaw/agents/devops/agent",
+        "model": {
+          "primary": "anthropic/claude-opus-4-6"
+        }
+      },
+      {
+        "id": "research",
+        "name": "research",
+        "workspace": "/Users/seanmckenzie/.openclaw/workspace-research",
+        "agentDir": "/Users/seanmckenzie/.openclaw/agents/research/agent",
+        "model": {
+          "primary": "anthropic/claude-sonnet-4-6"
+        }
+      },
+      {
+        "id": "designer",
+        "name": "designer",
+        "workspace": "/Users/seanmckenzie/.openclaw/workspace-designer",
+        "agentDir": "/Users/seanmckenzie/.openclaw/agents/designer/agent"
+      }
+    ]
+  },
+  "tools": {
+    "media": {
+      "audio": {
+        "enabled": true,
+        "models": [
+          {
+            "provider": "openai",
+            "model": "whisper-1"
+          }
+        ]
+      }
+    },
+    "sessions": {
+      "visibility": "all"
+    },
+    "agentToAgent": {
+      "enabled": true
+    }
+  },
+  "bindings": [
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "discord",
+        "accountId": "default"
+      }
+    },
+    {
+      "agentId": "developer",
+      "match": {
+        "channel": "discord",
+        "accountId": "charlie"
+      }
+    },
+    {
+      "agentId": "pm",
+      "match": {
+        "channel": "discord",
+        "accountId": "dennis"
+      }
+    },
+    {
+      "agentId": "devops",
+      "match": {
+        "channel": "discord",
+        "accountId": "frank"
+      }
+    },
+    {
+      "agentId": "research",
+      "match": {
+        "channel": "discord",
+        "accountId": "sweetdee"
+      }
+    },
+    {
+      "agentId": "designer",
+      "match": {
+        "channel": "discord",
+        "accountId": "cricket"
+      }
+    },
+    {
+      "agentId": "qa",
+      "match": {
+        "channel": "discord",
+        "accountId": "mac"
+      }
+    }
+  ],
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "boot-md": {
+          "enabled": true
+        },
+        "bootstrap-extra-files": {
+          "enabled": true
+        },
+        "command-logger": {
+          "enabled": true
+        },
+        "session-memory": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "groupPolicy": "allowlist",
+      "streaming": "off",
+      "voice": {
+        "enabled": true,
+        "autoJoin": [
+          {
+            "guildId": "1476108436344410144",
+            "channelId": "1476655601106026577"
+          }
+        ],
+        "daveEncryption": true,
+        "decryptionFailureTolerance": 24,
+        "tts": {
+          "provider": "openai",
+          "openai": {
+            "voice": "onyx"
+          }
+        }
+      },
+      "accounts": {
+        "default": {
+          "token": "__REDACTED__",
+          "groupPolicy": "allowlist",
+          "streaming": "off",
+          "guilds": {
+            "1476108436344410144": {
+              "requireMention": false,
+              "users": [
+                "1476106955155181579"
+              ]
+            }
+          }
+        },
+        "charlie": {
+          "token": "__REDACTED__",
+          "groupPolicy": "allowlist",
+          "streaming": "off",
+          "guilds": {
+            "1476108436344410144": {
+              "requireMention": true,
+              "users": [
+                "1476106955155181579"
+              ]
+            }
+          }
+        },
+        "dennis": {
+          "token": "__REDACTED__",
+          "groupPolicy": "allowlist",
+          "streaming": "off",
+          "guilds": {
+            "1476108436344410144": {
+              "requireMention": true,
+              "users": [
+                "1476106955155181579"
+              ]
+            }
+          }
+        },
+        "frank": {
+          "token": "__REDACTED__",
+          "groupPolicy": "allowlist",
+          "streaming": "off",
+          "guilds": {
+            "1476108436344410144": {
+              "requireMention": true,
+              "users": [
+                "1476106955155181579"
+              ]
+            }
+          }
+        },
+        "sweetdee": {
+          "token": "__REDACTED__",
+          "groupPolicy": "allowlist",
+          "streaming": "off",
+          "guilds": {
+            "1476108436344410144": {
+              "requireMention": true,
+              "users": [
+                "1476106955155181579"
+              ]
+            }
+          }
+        },
+        "cricket": {
+          "token": "__REDACTED__",
+          "groupPolicy": "allowlist",
+          "streaming": "off",
+          "guilds": {
+            "1476108436344410144": {
+              "requireMention": true,
+              "users": [
+                "1476106955155181579"
+              ]
+            }
+          }
+        },
+        "mac": {
+          "token": "__REDACTED__",
+          "groupPolicy": "allowlist",
+          "streaming": "off",
+          "guilds": {
+            "1476108436344410144": {
+              "requireMention": true,
+              "users": [
+                "1476106955155181579"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "signal": {
+      "enabled": false,
+      "account": "+14053156168",
+      "cliPath": "signal-cli",
+      "dmPolicy": "pairing",
+      "groupPolicy": "allowlist"
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "__REDACTED__"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "calendar.add",
+        "contacts.add",
+        "reminders.add"
+      ]
+    }
+  },
+  "plugins": {
+    "entries": {
+      "signal": {
+        "enabled": true
+      }
+    }
+  }
+}
